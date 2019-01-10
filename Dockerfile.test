@@ -1,0 +1,157 @@
+FROM node:8-alpine
+
+# --detectLeaks
+# ... requires `npm i weak`, which requires:
+#RUN apk add --no-cache python make g++
+
+WORKDIR /opt/gurumojo
+
+COPY test/*.json ./
+RUN npm ci
+
+COPY test/fixture test/fixture
+COPY test/spec test/spec
+COPY lib lib
+
+CMD ["node_modules/.bin/jest", "--color=false", "--coverage", "--detectOpenHandles", "--verbose"]
+
+
+#  --help, -h           Show help                            [boolean]
+#  --version, -v        Print the version and exit           [boolean]
+#
+#  --all                The opposite of `onlyChanged`. If
+#                       `onlyChanged` is set by default, running jest
+#                       with `--all` will force Jest to run all tests
+#                       instead of running only tests related to
+#                       changed files.
+#
+#  --automock           Automock all files by default.       [boolean]
+#
+#  --bail, -b           Exit the test suite immediately upon the first
+#                       failing test.                        [boolean]
+#
+#  --browser            Respect the "browser" field in package.json
+#                       when resolving modules. Some packages export
+#                       different versions based on whether they are
+#                       operating in node.js or a browser.   [boolean]
+#
+#  --cache              Whether to use the transform cache. Disable
+#                       the cache using --no-cache.          [boolean]
+#
+#  --color              Forces test results output color highlighting
+#                       (even if stdout is not a TTY). Set to false if
+#                       you would like to have no colors.    [boolean]
+#
+#  --coverage           Indicates that test coverage information
+#                       should be collected and reported in the
+#                       output.                              [boolean]
+#
+#  --coverageDirectory  The directory where Jest should output its
+#                       coverage files.                       [string]
+#
+#  --coveragePathIgnorePatterns    An array of regexp pattern strings
+#                                  that are matched against all file
+#                       paths before executing the test. If the file
+#                       pathmatches any of the patterns, coverage
+#                       information will be skipped.           [array]
+#
+#  --coverageReporters  A list of reporter names that Jest uses when
+#                       writing coverage reports. Any istanbul
+#                       reporter can be used.                  [array]
+#
+#  --coverageThreshold  A JSON string with which will be used to
+#                       configure minimum threshold enforcement for
+#                       coverage results                      [string]
+#
+#  --debug              Print debugging info about your jest config.
+#                                                            [boolean]
+#
+#  --detectLeaks        **EXPERIMENTAL**: Detect memory leaks in
+#                       tests. After executing a test, it will try to
+#                       garbage collect the global object used, and
+#                       fail if it was leaked
+#                                           [boolean] [default: false]
+#
+#  --detectOpenHandles  Print out remaining open handles preventing
+#                       Jest from exiting at the end of a test run.
+#                                           [boolean] [default: false]
+#
+#
+#  --filter             Path to a module exporting a filtering
+#                       function. This method receives a list of tests
+#                       which can be manipulated to exclude tests from
+#                       running. Especially useful when used in
+#                       conjunction with a testing infrastructure to
+#                       filter known broken tests.            [string]
+#
+#  --findRelatedTests   Find related tests for a list of source files
+#                       that were passed in as arguments. Useful for
+#                       pre-commit hook integration to run the minimal
+#                       amount of tests necessary.           [boolean]
+#
+#  --forceExit          Force Jest to exit after all tests have
+#                       completed running. This is useful when
+#                       resources set up by test code cannot be
+#                       adequately cleaned up.               [boolean]
+#
+#  --globalSetup        The path to a module that runs before All
+#                       Tests.                                [string]
+#
+#  --globalTeardown     The path to a module that runs after All
+#                       Tests.                                [string]
+#
+#  --globals            A JSON string with map of global variables
+#                       that need to be available in all test
+#                       environments.                         [string]
+#
+#  --init               Generate a basic configuration file  [boolean]
+#
+#  --json               Prints the test results in JSON. This mode
+#                       will send all other test output and user
+#                       messages to stderr.                  [boolean]
+#
+#  --lastCommit         Run all tests affected by file changes in the
+#                       last commit made. Behaves similarly to
+#                       `--onlyChanged`.                     [boolean]
+#
+#  --listTests          Lists all tests Jest will run given the
+#                       arguments and exits. Most useful in a CI
+#                       system together with `--findRelatedTests` to
+#                       determine the tests Jest will run based on
+#                       specific files      [boolean] [default: false]
+#
+#  --noStackTrace       Disables stack trace in test results output
+#                                                            [boolean]
+#
+#  --notify             Activates notifications for test results.
+#                                                            [boolean]
+#
+#  --notifyMode         Specifies when notifications will appear for
+#                       test results.     [string] [default: "always"]
+#
+#  --onlyChanged, -o    Attempts to identify which tests to run based
+#                       on which files have changed in the current
+#                       repository. Only works if you're running tests
+#                       in a git or hg repository at the moment.
+#                                                            [boolean]
+#
+#  --onlyFailures, -f   Run tests that failed in the previous
+#                       execution.                           [boolean]
+#
+#  --outputFile         Write test results to a file when the --json
+#                       option is also specified.             [string]
+#
+#  --useStderr          Divert all output to stderr.         [boolean]
+#
+#  --verbose            Display individual test results with the test
+#                       suite hierarchy.                     [boolean]
+#
+#  --watch              Watch files for changes and rerun tests
+#                       related to changed files. If you want to
+#                       re-run all tests when a file has changed, use
+#                       the `--watchAll` option.             [boolean]
+#
+#  --watchAll           Watch files for changes and rerun all tests.
+#                       If you want to re-run only the tests related
+#                       to the changed files, use the `--watch`
+#                       option.                              [boolean]

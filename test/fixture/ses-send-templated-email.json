@@ -1,0 +1,9 @@
+{
+	"ConfigurationSetName": "net-gurumojo-ses",
+	"Destination": {
+		"ToAddresses": []
+	},
+	"Source": "mailer-daemon@gurumojo.net",
+	"Template": "",
+	"TemplateData": "{}"
+}

@@ -1,0 +1,136 @@
+#!/bin/bash -e
+
+ROOT=$(dirname $(dirname $0))
+CONF_DIR="etc/postgres"
+BASE_DIR="$ROOT/$CONF_DIR"
+PATCH_DIR="$BASE_DIR/patch"
+PURGE_DIR="$BASE_DIR/purge"
+VERSION="$BASE_DIR/version"
+
+if [ $(ls "$PATCH_DIR") != $(ls "$PURGE_DIR") ] ;then
+	echo -e "\nERROR: mismatched patch and purge sets in $BASE_DIR"
+	exit 1
+fi
+PATCH=( $(for i in $(ls "$PATCH_DIR") ;do basename -s .sql "$i" ;done) )
+PURGE=( $(for i in $(ls -r "$PURGE_DIR") ;do basename -s .sql "$i" ;done) )
+COUNT=${#PATCH[*]}
+
+INIT=-1
+CURRENT=$(cat "$VERSION" 2>/dev/null) || true
+[ -z "$CURRENT" ] && CURRENT=$INIT
+for INDEX in ${!PATCH[@]}; do
+	if (( ${PATCH[$INDEX]} == ${CURRENT} )); then
+		break;
+	fi
+	INDEX=$INIT
+done
+NEXT=${PATCH[$INDEX + 1]}
+[ -z "$NEXT" ] && NEXT=$INIT
+HEAD=${PATCH[$COUNT - 1]}
+if (( $COUNT < 2 )) || [ "$INDEX" == "$INIT" ] || [ "$CURRENT" == "$INIT" ] ;then
+	PREV=$INIT
+else
+	PREV=${PATCH[$INDEX - 1]}
+	MOIN=$PREV
+fi
+
+case $1 in
+	latest|l)
+		TYPE=patch
+		TARGET=$HEAD
+		;;
+	next|n)
+		TYPE=patch
+		TARGET=$NEXT
+		;;
+	up|u)
+		TYPE=patch
+		TARGET=${2:-$HEAD}
+		;;
+	down|d)
+		TYPE=purge
+		TARGET=${2:-$INIT}
+		;;
+	previous|p)
+		TYPE=purge
+		TARGET=$PREV
+		;;
+	origin|o)
+		TYPE=purge
+		TARGET=$INIT
+		;;
+	status|s)
+		TYPE=list
+		TARGET=${2:-$CURRENT}
+		;;
+	*)
+		echo -e "\nUnknown data migration command: '$1'"
+		echo -e "\nUsage: $0 <command> [<target>]\n"
+		exit 2
+		;;
+esac
+
+if [ -n "$VERBOSE" ] ;then
+	echo "HEAD:$HEAD -- NEXT:$NEXT -- CURRENT:$CURRENT -- PREV:$PREV -- INIT:$INIT"
+	echo "INDEX:$INDEX -- TARGET:$TARGET"
+fi
+
+echo -e "\nAction: $TYPE\n"
+
+MIGRATION=()
+
+if [ $TYPE == list ] ;then
+	for x in ${PATCH[@]} ;do
+		if (( $x > $CURRENT )) ;then
+			echo "$x pending"
+		else
+			echo "$x done"
+		fi
+	done
+	echo -e "\nCurrent: $CURRENT\n"
+elif [ $TYPE == patch ] ;then
+	for x in ${PATCH[@]} ;do
+		if (( $x > $CURRENT )) && (( $x <= $TARGET )) ;then
+			MIGRATION+=($x)
+			echo "$x pending"
+			if [ -n "$VERBOSE" ] ;then
+				if (( $x > $CURRENT )) && (( $x > $TARGET )) ;then
+					echo "$x ignored"
+				else
+					echo "$x done"
+				fi
+			fi
+		fi
+	done
+elif [ $TYPE == purge ] ;then
+	for x in ${PURGE[@]} ;do
+		if (( $x <= $CURRENT )) && (( $x > $TARGET )) ;then
+			MIGRATION+=($x)
+			echo "$x pending"
+			if [ -n "$VERBOSE" ] ;then
+				if (( $x <= $CURRENT )) && (( $x > $INIT )) ;then
+					echo "$x ignored"
+				else
+					echo "$x done"
+				fi
+			fi
+		fi
+	done
+else
+	echo "Type mismatch!"
+	exit 3
+fi
+echo
+
+for x in ${MIGRATION[@]} ;do
+	DB_TASK="$CONF_DIR/$TYPE/$x.sql" make task
+	echo
+	if [ "$TYPE" == purge ] ;then
+		echo $MOIN > "$VERSION"
+		((MOIN--)) || MOIN=$INIT
+		(( $MOIN > $INIT )) && MOIN=${PATCH[$MOIN]}
+	else
+		echo $x > "$VERSION"
+	fi
+done
+echo "Done."

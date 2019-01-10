@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+COUNTER=0
+DURATION=0
+MAXIMUM=10
+
+echo -e "\nWaiting for ${DB_NAME} connection ...\n"
+
+while true ;do
+	sleep $DURATION
+	set +e
+	(( COUNTER++ ))
+	echo "Attempt $COUNTER ..."
+	PGUSER="$DB_USER" PGPASSWORD="$DB_SECRET" psql -w \
+		-h "$DB_HOST" -p "$DB_PORT" -d "$DB_NAME" -c "SELECT 1" >/dev/null 2>&1
+	fail=$?
+	set -e
+	if (( $fail )) ;then
+		if (( $COUNTER < $MAXIMUM )) ;then
+			DURATION=$(( $COUNTER * 2 ))
+		else
+			echo "ERROR: connection attempt count exceeded"
+			exit $fail
+		fi
+	else
+		break
+	fi
+done
+
+echo -e "\nApplying ${DB_NAME} changeset ${DB_TASK} ...\n"
+
+PGUSER="$DB_USER" PGPASSWORD="$DB_SECRET" psql -w \
+	-h "$DB_HOST" -p "$DB_PORT" -d "$DB_NAME" -f "$DB_TASK"

@@ -1,0 +1,20 @@
+{
+  "name": "aws-test",
+  "version": "0.0.1",
+  "description": "Test tooling for administration of AWS resources",
+  "author": "theguy@gurumojo.net",
+  "license": "ISC",
+  "homepage": "https://github.com/gurumojo/aws-test#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gurumojo/aws-test.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gurumojo/aws-test/issues"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.376.0",
+    "jest": "^23.6.0",
+    "supertest": "^3.3.0"
+  }
+}

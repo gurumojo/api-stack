@@ -1,0 +1,10 @@
+FROM alpine:latest
+
+RUN apk add --no-cache bash busybox openssl postgresql-client
+
+WORKDIR /opt/gurumojo
+
+COPY etc/postgres etc/postgres
+COPY bin bin
+
+CMD ["bin/run-task"]

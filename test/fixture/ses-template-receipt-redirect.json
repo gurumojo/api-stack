@@ -1,0 +1,8 @@
+{
+	"Template": {
+		"TemplateName": "ReceiptRedirect",
+		"SubjectPart": "{{subject}}",
+		"HtmlPart": "<h1>Redirected Message</h1><div>{{#if html}}{{html}}{{else}}<pre>{{text}}</pre>{{/if}}</div><dl><dt>date</dt><dd>{{date}}</dd><dt>from</dt><dd>{{from}}</dd><dt>to</dt><dd>{{to}}</dd><dt>id</dt><dd>{{id}}</dd></dl>",
+		"TextPart": "Redirected Message\n\n date: {{date}}\n from: {{from}}\n   to: {{to}}\n   id: {{id}}\n\n\n{{text}}"
+	}
+}

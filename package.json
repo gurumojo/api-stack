@@ -1,0 +1,21 @@
+{
+  "name": "aws",
+  "version": "0.0.1",
+  "description": "CLI tooling for administration of AWS resources",
+  "license": "ISC",
+  "author": "theguy@gurumojo.net",
+  "scripts": {
+    "schema-bump": "bin/migrate up",
+    "schema-roll": "bin/migrate down",
+    "test": "make up && make test",
+    "test-local": "make up && make test-local"
+  },
+  "bugs": {
+    "url": "https://github.com/gurumojo/aws/issues"
+  },
+  "repository": {
+    "url": "git+https://github.com/gurumojo/aws.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/gurumojo/aws#readme"
+}

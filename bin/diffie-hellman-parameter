@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+NAME=${1:-dhparam}
+PATH=${2:-.}
+FILE=${PATH}/${NAME}.pem
+
+/usr/bin/openssl dhparam -out $FILE 2048
+
+/bin/chmod 600 $FILE

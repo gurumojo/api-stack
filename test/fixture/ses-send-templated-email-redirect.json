@@ -1,0 +1,9 @@
+{
+	"ConfigurationSetName": "net-gurumojo-ses",
+	"Source": "mailer-daemon@gurumojo.net",
+	"Destination": {
+		"ToAddresses": []
+	},
+	"Template": "ReceiptRedirect",
+	"TemplateData": "{\"subject\":\"default\",\"html\":null,\"date\":\"today\",\"id\":\"me\",\"from\":\"theguy\",\"to\":\"you\",\"text\":\"content\"}"
+}

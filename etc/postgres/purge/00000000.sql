@@ -1,0 +1,3 @@
+DROP SCHEMA api CASCADE;
+DROP ROLE api_anon;
+DROP ROLE api_auth;

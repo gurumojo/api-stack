@@ -1,0 +1,16 @@
+{
+  "name": "status",
+  "version": "0.0.1",
+  "description": "Core sidecar endpoints for container services",
+  "license": "ISC",
+  "author": "theguy@gurumojo.net",
+  "main": "server.js",
+  "scripts": {
+    "test": "exit 1"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "http-graceful-shutdown": "^2.2.2",
+    "request": "^2.88.0"
+  }
+}

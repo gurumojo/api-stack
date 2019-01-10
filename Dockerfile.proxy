@@ -1,0 +1,21 @@
+FROM nginx:stable-alpine as builder
+
+COPY bin bin
+
+RUN apk add --no-cache bash busybox openssl && \
+	mkdir -p /etc/nginx/pki && \
+	bin/diffie-hellman-parameter dhparam /etc/nginx/pki && \
+	bin/self-signed-certificate server /etc/nginx/pki
+
+
+
+FROM nginx:stable-alpine
+	
+COPY --from=builder /etc/nginx/pki /etc/nginx/pki
+
+RUN rm -f /etc/nginx/conf.d/*
+
+COPY etc/nginx/nginx.conf /etc/nginx/
+
+ARG BUILD_CONTEXT
+COPY etc/nginx/conf.d/${BUILD_CONTEXT}.conf /etc/nginx/conf.d/
