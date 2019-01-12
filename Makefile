@@ -6,7 +6,8 @@ COUNT?=0
 FILE=docker-compose
 
 build:
-	docker-compose -f ${FILE}.api.yml -f ${FILE}.task.yml -f ${FILE}.test.yml \
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
+		-f ${FILE}.task.yml -f ${FILE}.test.yml \
 		build --force-rm ${SERVICE}
 
 bump:
@@ -17,16 +18,23 @@ ci:
 		build --force-rm --no-cache --pull
 
 clean:
-	docker-compose -f ${FILE}.api.yml -f ${FILE}.task.yml -f ${FILE}.test.yml \
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
+		-f ${FILE}.task.yml -f ${FILE}.test.yml \
 		down -v --remove-orphans --rmi local
 	docker rm $(docker ps -aq) 2>/dev/null || true
 	docker image prune -f
 	rm -f etc/postgres/version
 
-dev: build up test-local
+dev: build docs test-local
+
+docs:
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.test.yml -f ${FILE}.docs.yml \
+		up -d ${SERVICE}
 
 down:
-	docker-compose -f ${FILE}.api.yml -f ${FILE}.task.yml -f ${FILE}.test.yml down
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
+		-f ${FILE}.task.yml -f ${FILE}.test.yml \
+		down
 	rm -f etc/postgres/version
 
 init: clean build up bump test
@@ -35,15 +43,18 @@ launch:
 	docker-compose up -d --build --remove-orphans --force-recreate ${SERVICE}
 
 logs:
-	docker-compose -f ${FILE}.api.yml -f ${FILE}.task.yml -f ${FILE}.test.yml \
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
+		-f ${FILE}.task.yml -f ${FILE}.test.yml \
 		logs ${SERVICE}
 
 local:
-	docker-compose -f ${FILE}.api.yml -f ${FILE}.local.yml \
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.test.yml -f ${FILE}.local.yml \
 		up -d ${SERVICE}
 
 ps:
-	docker-compose -f ${FILE}.api.yml -f ${FILE}.task.yml -f ${FILE}.test.yml ps
+	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
+		-f ${FILE}.task.yml -f ${FILE}.test.yml \
+		ps
 
 purge:
 	sudo rm -rf var/*
