@@ -1,26 +1,32 @@
 version: '2'
 networks:
-  rest:
+  stack:
     driver: bridge
+    ipam:
+      config:
+      - subnet: 172.16.238.0/24
+        gateway: 172.16.238.1
 services:
   api:
     image: ${API_IMAGE}
     expose:
       - ${API_PORT}
     networks:
-      - rest
+      - stack
     depends_on:
       - db
     environment:
       PGRST_DB_ANON_ROLE: ${API_ANON_ROLE}
       PGRST_DB_SCHEMA: ${API_SCHEMA}
       PGRST_DB_URI: postgres://${DB_USER}:${DB_SECRET}@${DB_HOST}:${DB_PORT}/${DB_NAME}
-      PGRST_JWT_AUD: ${API_AUTH_ROLE}
+      PGRST_JWT_AUD: ${COMPOSE_PROJECT_NAME}
       PGRST_JWT_SECRET: ${API_SECRET}
   db:
-    image: ${DB_IMAGE}
+    build:
+      context: .
+      dockerfile: Dockerfile.db
     networks:
-      - rest
+      - stack
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -29,12 +35,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.proxy
-      args:
-        - BUILD_CONTEXT
     ports:
       - "${SECURE_PORT}:${PROXY_PORT}"
     networks:
-      - rest
+      - stack
     depends_on:
       - api
   status:
@@ -44,5 +48,5 @@ services:
     expose:
       - ${STATUS_PORT}
     networks:
-      - rest
+      - stack
     env_file: .env

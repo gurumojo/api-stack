@@ -4,8 +4,8 @@ api-stack
 Service stack definition providing a secure Nginx proxy, a PostgREST server,
 and an Express server complete with centralized configuration via the .env
 mechanism provided by docker-compose for local development. Testing and
-production environments should overwrite secrets hard coded into this repo
-with functionality similar to the AWS SSM parameter store.
+production environments should overwrite default secrets coded into this
+library with secure functionality similar to the AWS SSM parameter store.
 
 
 Prerequisite

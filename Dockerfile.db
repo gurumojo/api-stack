@@ -1,0 +1,4 @@
+FROM postgres:9-alpine
+
+# un-comment to set debug level logging for postgres
+COPY bin/db-init /docker-entrypoint-initdb.d/init.sh

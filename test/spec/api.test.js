@@ -2,6 +2,8 @@ const request = require('supertest')
 
 const {charset, header, status, type} = require('./../../lib/constant')
 
+const jwt = require('../fixture/jwt').api_auth
+
 const {API_HOST, API_PORT} = process.env
 
 const api = request(`http://${API_HOST}:${API_PORT}`)
@@ -10,6 +12,12 @@ const path = '/'
 const swagger = '2.0'
 const title = 'PostgREST API'
 const summary = 'OpenAPI description (this document)'
+const user = {
+	"id":"e1be1033-4668-4652-bc44-dfcb904ca537",
+	"email":"theguy@gurumojo.net",
+	"phone":"12345678901",
+	"handle":"theguy"
+}
 
 describe(title, () => {
 
@@ -35,6 +43,37 @@ describe(title, () => {
 			expect(response.body.info.title).toBe(title)
 			expect(response.body.paths[path].get.summary).toBe(summary)
 		})
+	})
+
+	it('uses JWT for authorization', () => {
+		return api.get(path)
+		.set(header.AUTH, `Bearer ${jwt}`)
+		.then(response => {
+			expect(response.body.swagger).toBe(swagger)
+			expect(response.body.info.title).toBe(title)
+			expect(response.body.paths[path].get.summary).toBe(summary)
+		})
+	})
+
+	it('refuses POST requests at the root path', () => {
+		return api.post(path)
+		.send(user)
+		.set(header.AUTH, `Bearer ${jwt}`)
+		.expect(status.NOT_FOUND)
+	})
+
+	it('allows POST requests for authenticated users', () => {
+		return api.post('/user')
+		.send(user)
+		.set(header.AUTH, `Bearer ${jwt}`)
+		.expect(status.CREATED)
+	})
+
+	it('allows DELETE requests for authenticated users', () => {
+		return api.delete('/user')
+		.send(user)
+		.set(header.AUTH, `Bearer ${jwt}`)
+		.expect(status.NO_CONTENT)
 	})
 })
 
