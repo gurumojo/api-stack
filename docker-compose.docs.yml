@@ -5,7 +5,7 @@ services:
     ports:
       - "${SWAGGER_PORT}:${SWAGGER_PORT}"
     networks:
-      - stack
+      - public
     depends_on:
       - api
     environment:

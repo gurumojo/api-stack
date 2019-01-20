@@ -1,3 +1,5 @@
 #!/bin/sh
 
-echo "log_statement = 'all'" >> /var/lib/postgresql/data/postgresql.conf
+if [ -n "$DEBUG" ] ;then
+	echo "log_statement = 'all'" >> /var/lib/postgresql/data/postgresql.conf
+fi

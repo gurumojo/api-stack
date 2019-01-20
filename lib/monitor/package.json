@@ -1,7 +1,7 @@
 {
-  "name": "status",
+  "name": "monitor",
   "version": "0.0.1",
-  "description": "Core sidecar endpoints for container services",
+  "description": "Stack monitor endpoints for container services",
   "license": "ISC",
   "author": "theguy@gurumojo.net",
   "main": "server.js",

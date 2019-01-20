@@ -5,14 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile.test
     networks:
-      - stack
+      - public
     depends_on:
       - proxy
     environment:
       - NODE_TLS_REJECT_UNAUTHORIZED
       - API_HOST
       - API_PORT
+      - MONITOR_HOST
+      - MONITOR_PORT
       - PROXY_HOST
       - PROXY_PORT
-      - STATUS_HOST
-      - STATUS_PORT

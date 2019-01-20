@@ -1,0 +1,110 @@
+#!/bin/bash -e
+exec 2>&1
+
+PID=$$
+root=$(dirname $(dirname $0))
+
+
+prerequisite=${CONTAINER_PRE}
+command=${CONTAINER_CMD:-tail -f /dev/null}
+verbose=${VERBOSE}
+
+
+function kill1() {
+	# SIGHUP
+	SIGNAL=1
+	restart
+}
+
+function kill10() {
+	# SIGUSR1
+	SIGNAL=10
+	restart
+}
+
+function kill12() {
+	# SIGUSR2
+	SIGNAL=12
+	restart
+}
+
+function kill2() {
+	# SIGINT
+	SIGNAL=2
+	clean
+}
+
+function kill3() {
+	# SIGQUIT
+	SIGNAL=3
+	clean
+}
+
+function kill6() {
+	# SIGABRT
+	SIGNAL=6
+	clean
+}
+
+function kill15() {
+	# SIGTERM
+	SIGNAL=15
+	clean
+}
+
+
+function clean() {
+	echo "Caught signal ${SIGNAL}"
+	continue=0
+	stop
+	echo "Done."
+}
+
+function monitor() {
+	$(kill -0 $PID >/dev/null)
+	fail=$?
+	if (($fail)) ;then
+		[ -n "$verbose" ] && echo "SUB ${PID} failed!" || true
+		kill15
+	fi
+	[ -n "$verbose" ] && echo "SUB ${PID} OK ..." || true
+}
+
+function restart() {
+	[ -n "$verbose" ] && echo "signal ${SIGNAL}; restarting ..." || true
+	stop
+	start
+}
+
+function start() {
+	[ -n "$verbose" ] && echo "starting SUB ..." || true
+	"$root/bin/retry" $prerequisite
+	$command &
+	PID=$!
+	[ -n "$verbose" ] && echo "SUB: $PID" || true
+}
+
+function stop() {
+	[ -n "$verbose" ] && echo "stopping SUB ${PID} ..." || true
+	kill -9 $PID >/dev/null || true
+}
+
+# restart
+trap kill1 SIGHUP
+trap kill10 SIGUSR1
+trap kill12 SIGUSR2
+# clean
+trap kill2 SIGINT
+trap kill3 SIGQUIT
+trap kill6 SIGABRT
+trap kill15 SIGTERM
+
+source "$root/bin/env-init"
+[ -n "$verbose" ] && env
+start
+
+continue=1
+while (($continue)); do
+	sleep 1
+	monitor
+done

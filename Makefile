@@ -21,8 +21,6 @@ clean:
 	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
 		-f ${FILE}.task.yml -f ${FILE}.test.yml \
 		down -v --remove-orphans --rmi local
-	docker rm $(docker ps -aq) 2>/dev/null || true
-	docker image prune -f
 	rm -f etc/postgres/version
 
 dev: build docs test-local
@@ -40,7 +38,7 @@ down:
 init: clean build up bump test
 
 launch:
-	docker-compose up -d --build --remove-orphans --force-recreate ${SERVICE}
+	docker-compose up -d --build --force-recreate --remove-orphans ${SERVICE}
 
 logs:
 	docker-compose -f ${FILE}.api.yml -f ${FILE}.docs.yml \
@@ -56,14 +54,20 @@ ps:
 		-f ${FILE}.task.yml -f ${FILE}.test.yml \
 		ps
 
-purge:
-	sudo rm -rf var/*
-	docker image prune -f
-	rm -f etc/postgres/version
-	rm -rf {test,lib/lambda/*,lib/status}/node_modules
+purge: clean sweep
+
+pristine: clean scrub sweep
 
 roll:
 	bin/migrate down ${SCHEMA}
+
+scrub:
+	sudo rm -rf var/* 
+
+sweep:
+	docker rm $(docker ps -aq) 2>/dev/null || true
+	docker image prune -f
+	rm -rf {test,lib/lambda/*,lib/monitor}/node_modules
 
 tail:
 	docker-compose -f ${FILE}.api.yml -f ${FILE}.task.yml -f ${FILE}.test.yml \

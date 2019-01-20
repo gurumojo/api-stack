@@ -1,12 +1,8 @@
-FROM node:8-alpine
-
-# --detectLeaks
-# ... requires `npm i weak`, which requires:
-#RUN apk add --no-cache python make g++
+FROM node:10-alpine
 
 WORKDIR /opt/gurumojo
 
-COPY test/*.json ./
+COPY test/package*.json ./
 RUN npm ci
 
 COPY test/fixture test/fixture
@@ -14,6 +10,11 @@ COPY test/spec test/spec
 COPY lib lib
 
 CMD ["node_modules/.bin/jest", "--color=false", "--coverage", "--detectOpenHandles", "--verbose"]
+
+
+# --detectLeaks
+# ... requires `npm i weak`, which requires:
+#RUN apk add --no-cache python make g++
 
 
 #  --help, -h           Show help                            [boolean]

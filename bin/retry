@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Exponential backoff script to retry shell commands
+#
+# Usage:
+#
+#  $ RETRY_CMD=<exe> RETRY_MAX=<num> RETRY_CAP=<num> retry
+#
+#  $ retry <exe> <with> <args>
+
+COMMAND=${RETRY_CMD:-$@}  # executable path and args
+LIMIT=${RETRY_MAX:-10}  # loop count threshold
+CAP=${RETRY_CAP:-32}  # wait duration threshold
+BACKOFF=1
+COUNT=0
+
+echo "Executing '$COMMAND' ..."
+
+while (( $COUNT < $LIMIT )) ;do
+	let COUNT=$COUNT+1
+	$COMMAND
+	if [ $? -eq 0 ] ;then
+		echo "Done after $COUNT attempts."
+		exit 0
+	fi
+	let BACKOFF=$BACKOFF*2
+	if (( $BACKOFF > $CAP )) ;then
+		BACKOFF=$CAP
+	fi
+	echo "Attempt $COUNT failed."
+	if (( $COUNT < $LIMIT )) ;then
+		echo "Trying again after $BACKOFF seconds ..."
+		sleep $BACKOFF
+	fi
+done
+
+echo "Tried and failed $COUNT times.... Giving up."
+exit 1

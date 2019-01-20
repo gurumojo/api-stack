@@ -8,14 +8,14 @@ services:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
       - ./var/data:/var/lib/postgresql/data
+  monitor:
+    ports:
+      - "${SIDECAR_PORT}:${MONITOR_PORT}"
+    volumes:
+      - ./var/run/monitor:/var/run/monitor
   proxy:
     volumes:
       - ./var/log/nginx:/var/log/nginx
-  status:
-    ports:
-      - "${SIDECAR_PORT}:${STATUS_PORT}"
-    volumes:
-      - ./var/run/status:/var/run/status
   test:
     volumes:
       - ./var/test/coverage:/opt/gurumojo/coverage

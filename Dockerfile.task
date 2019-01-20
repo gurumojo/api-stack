@@ -1,6 +1,7 @@
 FROM alpine:latest
 
-RUN apk add --no-cache bash busybox openssl postgresql-client
+RUN apk add -q --update --no-cache \
+	bash busybox openssl postgresql-client
 
 WORKDIR /opt/gurumojo
 

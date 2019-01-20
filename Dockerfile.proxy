@@ -1,8 +1,8 @@
-FROM nginx:stable-alpine as builder
+FROM nginx:stable-alpine AS builder
 
 COPY bin bin
 
-RUN apk add --no-cache bash busybox openssl && \
+RUN apk --update --no-cache add bash busybox openssl && \
 	mkdir -p /etc/pki/nginx && \
 	bin/diffie-hellman-parameter dhparam /etc/pki/nginx && \
 	bin/self-signed-certificate server /etc/pki/nginx
@@ -10,11 +10,20 @@ RUN apk add --no-cache bash busybox openssl && \
 
 
 FROM nginx:stable-alpine
-	
+
+RUN apk add -q --update --no-cache \
+	bash curl jq
+
 COPY --from=builder /etc/pki/nginx /etc/pki/nginx
 
-COPY etc/nginx/nginx.conf /etc/nginx/
+COPY etc/nginx /etc/nginx
 
-COPY etc/nginx/conf.d/default.conf /etc/nginx/conf.d/
-COPY etc/nginx/conf.d/status.conf /etc/nginx/conf.d/
-COPY etc/nginx/conf.d/api.conf /etc/nginx/conf.d/
+WORKDIR /opt/gurumojo
+
+COPY bin bin
+COPY .env .env
+
+ENV CONTAINER_PRE=/opt/gurumojo/bin/proxy-init
+ENV CONTAINER_CMD=nginx
+
+CMD ["bin/container-init"]

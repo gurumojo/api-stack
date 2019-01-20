@@ -1,7 +1,7 @@
 {
-  "name": "aws",
+  "name": "api-stack",
   "version": "0.0.1",
-  "description": "CLI tooling for administration of AWS resources",
+  "description": "service container abstraction",
   "license": "ISC",
   "author": "theguy@gurumojo.net",
   "scripts": {
@@ -11,11 +11,11 @@
     "test-local": "make up && make test-local"
   },
   "bugs": {
-    "url": "https://github.com/gurumojo/aws/issues"
+    "url": "https://github.com/gurumojo/api-stack/issues"
   },
   "repository": {
-    "url": "git+https://github.com/gurumojo/aws.git",
+    "url": "git+https://github.com/gurumojo/api-stack.git",
     "type": "git"
   },
-  "homepage": "https://github.com/gurumojo/aws#readme"
+  "homepage": "https://github.com/gurumojo/api-stack#readme"
 }

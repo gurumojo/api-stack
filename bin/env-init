@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+root=$(dirname $(dirname $0))
+
+set -a
+source "$root/.env"
+
+if [ -n "$GURUMOJO" ] ;then
+	AWS_PROFILE=prod
+elif [ -n "$DEMO_HOME" ] ;then
+	AWS_PROFILE=test
+elif [ -n "$JENKINS_HOME" ] ;then
+	AWS_PROFILE=test
+else
+	AWS_PROFILE=dev
+fi
+set +a
+
+case $AWS_PROFILE in
+	prod)
+		echo "Initializing production environment ..."
+		;;
+	test)
+		echo "Initializing testing environment ..."
+		;;
+	dev)
+		echo "Initializing development environment ..."
+		;;
+	*)
+		echo "WTF?!"; exit 3
+		;;
+esac
+
+if [ $AWS_PROFILE != dev ] ;then
+	name='.path|split("/")|.[-1:]|.[0]'
+	as_env='split("-")|join("_")|ascii_upcase'
+	secret=$($("$root/bin/get-params") | jq -r \
+		".[]|($name|$as_env)+\"=\"+.text")
+
+	for x in ${secret[@]} ;do
+		export $x
+	done
+fi

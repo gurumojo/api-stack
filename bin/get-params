@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+AWS_PROFILE=${AWS_PROFILE:-default}
+AWS_REGION=${AWS_REGION:-us-west-2}
+PARAM_PATH=${PARAM_PATH:-/net/gurumojo/api/${AWS_PROFILE}}
+
+aws ssm get-parameters-by-path --with-decryption --no-paginate \
+	--query "Parameters[*].{path:Name,text:Value}" \
+	--profile "$AWS_PROFILE" \
+	--region "$AWS_REGION" \
+	--path "$PARAM_PATH"

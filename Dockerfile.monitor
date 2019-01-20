@@ -1,0 +1,19 @@
+FROM node:10-alpine
+
+RUN apk add -q --update --no-cache \
+	bash curl jq
+
+WORKDIR /opt/gurumojo
+
+COPY lib/monitor/package*.json ./
+RUN npm ci
+
+COPY bin bin
+COPY .env .env
+COPY lib/monitor .
+COPY lib/*.js lib/
+
+ENV CONTAINER_PRE=bin/monitor-init
+ENV CONTAINER_CMD="node server"
+
+CMD ["bin/container-init"]

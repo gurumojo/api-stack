@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+count0=$(grep -c daemon /etc/nginx/nginx.conf) || true
+if [ $count0 -eq 0 ] ;then
+	echo 'daemon off;' >> /etc/nginx/nginx.conf
+else
+	echo 'daemon disabled'
+fi
+
+count1=$(curl -s http://${API_HOST}:${API_PORT}/ | jq '.paths|length')
+
+count2=$(curl -s http://${MONITOR_HOST}:${MONITOR_PORT}/env | jq '.env|length')
+
+if (( $count1 )) && (( $count2 )) ;then
+	exit 0
+else
+	exit 1
+fi

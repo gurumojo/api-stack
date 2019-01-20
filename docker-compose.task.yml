@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile.task
     networks:
-      - stack
+      - private
     depends_on:
-      - proxy
+      - api
     environment:
       - NODE_TLS_REJECT_UNAUTHORIZED
       - DB_HOST

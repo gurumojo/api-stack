@@ -1,18 +1,25 @@
 version: '2'
 networks:
-  stack:
+  private:
     driver: bridge
     ipam:
       config:
-      - subnet: 172.16.238.0/24
-        gateway: 172.16.238.1
+      - subnet: 172.16.241.0/24
+        gateway: 172.16.241.1
+  public:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.16.141.0/24
+        gateway: 172.16.141.1
 services:
   api:
     image: ${API_IMAGE}
     expose:
       - ${API_PORT}
     networks:
-      - stack
+      - private
+      - public
     depends_on:
       - db
     environment:
@@ -25,12 +32,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.db
+    expose:
+      - ${DB_PORT}
     networks:
-      - stack
+      - private
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_SECRET}
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitor
+    expose:
+      - ${MONITOR_PORT}
+    networks:
+      - private
+      - public
   proxy:
     build:
       context: .
@@ -38,15 +56,7 @@ services:
     ports:
       - "${SECURE_PORT}:${PROXY_PORT}"
     networks:
-      - stack
+      - public
     depends_on:
       - api
-  status:
-    build:
-      context: .
-      dockerfile: Dockerfile.status
-    expose:
-      - ${STATUS_PORT}
-    networks:
-      - stack
-    env_file: .env
+      - monitor

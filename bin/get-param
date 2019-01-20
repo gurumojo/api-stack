@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+AWS_PROFILE=${AWS_PROFILE:-default}
+AWS_REGION=${AWS_REGION:-us-west-2}
+PARAM_NAME=${PARAM_NAME:-/net/gurumojo/api/default}
+
+aws ssm get-parameter --with-decryption \
+	--profile "$AWS_PROFILE" \
+	--region "$AWS_REGION" \
+	--name "$PARAM_NAME"

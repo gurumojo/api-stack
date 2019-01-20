@@ -1,11 +1,10 @@
 CREATE SCHEMA api;
 
 CREATE TYPE api.client AS ENUM (
-	'android'
-	'blackberry'
-	'ios'
-	'linux'
-	'mac'
+	'android',
+	'ios',
+	'linux',
+	'mac',
 	'windows'
 );
 
