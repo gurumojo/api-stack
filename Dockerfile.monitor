@@ -9,6 +9,7 @@ COPY lib/monitor/package*.json ./
 RUN npm ci
 
 COPY bin bin
+COPY etc etc
 COPY .env .env
 COPY lib/monitor .
 COPY lib/*.js lib/

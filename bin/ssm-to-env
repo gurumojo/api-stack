@@ -1,0 +1,26 @@
+#!/bin/bash -e
+#
+# Usage:
+#
+# source bin/ssm-to-env test/fixture/ssm-query.json
+#
+# text=$(cat test/fixture/ssm-query.json)
+# source bin/ssm-to-env $text
+
+[ -z "$1" ] && exit 1
+
+name='.path|split("/")|.[-1:]|.[0]'
+as_env='split("-")|join("_")|ascii_upcase'
+as_export=".[]|($name|$as_env)+\"=\"+.text"
+
+if [ -f "$1" ] ;then
+	cmd=cat
+else
+	cmd=echo
+fi
+
+list=$($cmd "$1" | jq -r $as_export)
+
+for x in ${list[@]} ;do
+	export $x
+done

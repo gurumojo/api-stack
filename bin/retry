@@ -20,7 +20,7 @@ while (( $COUNT < $LIMIT )) ;do
 	let COUNT=$COUNT+1
 	$COMMAND
 	if [ $? -eq 0 ] ;then
-		echo "Done after $COUNT attempts."
+		echo "Done executing '$COMMAND' after $COUNT attempts."
 		exit 0
 	fi
 	let BACKOFF=$BACKOFF*2
@@ -29,10 +29,10 @@ while (( $COUNT < $LIMIT )) ;do
 	fi
 	echo "Attempt $COUNT failed."
 	if (( $COUNT < $LIMIT )) ;then
-		echo "Trying again after $BACKOFF seconds ..."
+		echo "Trying '$COMMAND' again after $BACKOFF seconds ..."
 		sleep $BACKOFF
 	fi
 done
 
-echo "Tried and failed $COUNT times.... Giving up."
+echo "Executing '$COMMAND' failed $COUNT times.... Giving up."
 exit 1

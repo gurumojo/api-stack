@@ -1,0 +1,24 @@
+#!/bin/bash -e
+#
+# Usage:
+#
+# bin/json-to-env test/fixture/env.json
+#
+# text=$(cat test/fixture/env.json)
+# bin/json-to-env $text
+
+[ -z "$1" ] && exit 1
+
+as_export='.|to_entries|.[]|.key+"="+.value'
+
+if [ -f "$1" ] ;then
+	cmd=cat
+else
+	cmd=echo
+fi
+
+list=$($cmd "$1" | jq -r $as_export)
+
+for x in ${list[@]} ;do
+	echo $x
+done

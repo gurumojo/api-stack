@@ -35,7 +35,7 @@ down:
 		down
 	rm -f etc/postgres/version
 
-init: clean build up bump test
+init: purge build up bump test
 
 launch:
 	docker-compose up -d --build --force-recreate --remove-orphans ${SERVICE}

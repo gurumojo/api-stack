@@ -14,7 +14,9 @@ networks:
         gateway: 172.16.141.1
 services:
   api:
-    image: ${API_IMAGE}
+    build:
+      context: .
+      dockerfile: Dockerfile.api
     expose:
       - ${API_PORT}
     networks:

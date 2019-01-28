@@ -4,11 +4,9 @@ exec 2>&1
 PID=$$
 root=$(dirname $(dirname $0))
 
-
 prerequisite=${CONTAINER_PRE}
 command=${CONTAINER_CMD:-tail -f /dev/null}
 verbose=${VERBOSE}
-
 
 function kill1() {
 	# SIGHUP
@@ -52,7 +50,6 @@ function kill15() {
 	clean
 }
 
-
 function clean() {
 	echo "Caught signal ${SIGNAL}"
 	continue=0
@@ -79,6 +76,10 @@ function restart() {
 function start() {
 	[ -n "$verbose" ] && echo "starting SUB ..." || true
 	"$root/bin/retry" $prerequisite
+	if [ -f "$root/etc/update.env" ] ;then
+		source "$root/etc/update.env"
+		rm "$root/etc/update.env"
+	fi
 	$command &
 	PID=$!
 	[ -n "$verbose" ] && echo "SUB: $PID" || true
@@ -100,7 +101,6 @@ trap kill6 SIGABRT
 trap kill15 SIGTERM
 
 source "$root/bin/env-init"
-[ -n "$verbose" ] && env
 start
 
 continue=1

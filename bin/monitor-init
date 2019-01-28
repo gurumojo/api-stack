@@ -2,9 +2,21 @@
 
 root=$(dirname $(dirname $0))
 
+case "$AWS_PROFILE" in
+	prod)
+		echo "Initializing production environment ..."
+		;;
+	test)
+		echo "Initializing testing environment ..."
+		;;
+	dev)
+		echo "Initializing development environment ..."
+		;;
+	*)
+		echo "WTF?!"; exit 3
+		;;
+esac
 
-if (( 1 )) ;then
-	exit 0
-else
-	exit 1
+if [ $AWS_PROFILE != dev ] ;then
+	"$root/bin/ssm-to-env" $("$root/bin/get-params") >> "$root/etc/update.env"
 fi

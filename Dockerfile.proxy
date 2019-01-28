@@ -21,9 +21,10 @@ COPY etc/nginx /etc/nginx
 WORKDIR /opt/gurumojo
 
 COPY bin bin
+COPY etc etc
 COPY .env .env
 
-ENV CONTAINER_PRE=/opt/gurumojo/bin/proxy-init
+ENV CONTAINER_PRE=bin/proxy-init
 ENV CONTAINER_CMD=nginx
 
 CMD ["bin/container-init"]

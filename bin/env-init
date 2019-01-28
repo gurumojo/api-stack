@@ -15,31 +15,3 @@ else
 	AWS_PROFILE=dev
 fi
 set +a
-
-case $AWS_PROFILE in
-	prod)
-		echo "Initializing production environment ..."
-		;;
-	test)
-		echo "Initializing testing environment ..."
-		;;
-	dev)
-		echo "Initializing development environment ..."
-		;;
-	*)
-		echo "WTF?!"; exit 3
-		;;
-esac
-
-if [ $AWS_PROFILE != dev ] ;then
-
-	name='.path|split("/")|.[-1:]|.[0]'
-	as_env='split("-")|join("_")|ascii_upcase'
-	key_val=".[]|($name|$as_env)+\"=\"+.text"
-
-	secret=$($("$root/bin/get-params") | jq -r $key_val)
-
-	for x in ${secret[@]} ;do
-		export $x
-	done
-fi

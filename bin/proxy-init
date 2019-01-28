@@ -1,15 +1,24 @@
-#!/bin/bash -e
+#!/bin/bash
+
+root=$(dirname $(dirname $0))
 
 count0=$(grep -c daemon /etc/nginx/nginx.conf) || true
 if [ $count0 -eq 0 ] ;then
 	echo 'daemon off;' >> /etc/nginx/nginx.conf
 fi
 
+config=$(curl -s http://${MONITOR_HOST}:${MONITOR_PORT}/config)
+fail=$?
+
+if (( $fail )) ;then
+	exit 1
+else
+	"$root/bin/json-to-env" "$config" >> "$root/etc/update.env"
+fi
+
 count1=$(curl -s http://${API_HOST}:${API_PORT}/ | jq '.paths|length')
 
-count2=$(curl -s http://${MONITOR_HOST}:${MONITOR_PORT}/env | jq '.env|length')
-
-if (( $count1 )) && (( $count2 )) ;then
+if (( $count1 )) ;then
 	exit 0
 else
 	exit 1
