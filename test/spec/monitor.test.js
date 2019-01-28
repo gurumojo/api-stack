@@ -62,6 +62,25 @@ describe('Service Monitor', () => {
 		})
 	})
 
+	describe(config, () => {
+
+		it('returns OK with JSON', () => {
+			return monitor.get(config)
+			.expect(status.OK)
+			.expect(header.CONTENT_TYPE, `${type.JSON}; ${charset.UTF8}`)
+		})
+	})
+
+	describe(report, () => {
+
+		it('returns CREATED with JSON', () => {
+			return monitor.post(report)
+			.send({ foo: 'bar', baz: 'qux' })
+			.expect(status.CREATED)
+			.expect(header.CONTENT_TYPE, `${type.JSON}; ${charset.UTF8}`)
+		})
+	})
+
 	describe(wildcard, () => {
 
 		it('returns Not Found with HTML', () => {

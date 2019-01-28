@@ -1,0 +1,13 @@
+#!/bin/bash
+
+config=$(curl -s http://${MONITOR_HOST}:${MONITOR_PORT}/config | "$root/bin/json-to-env")
+fail=$?
+
+if (( $fail )) ;then
+	exit 1
+else
+	for x in ${config[@]} ;do
+		export $x
+	done
+	exit 0
+fi

@@ -32,10 +32,12 @@ case $AWS_PROFILE in
 esac
 
 if [ $AWS_PROFILE != dev ] ;then
+
 	name='.path|split("/")|.[-1:]|.[0]'
 	as_env='split("-")|join("_")|ascii_upcase'
-	secret=$($("$root/bin/get-params") | jq -r \
-		".[]|($name|$as_env)+\"=\"+.text")
+	key_val=".[]|($name|$as_env)+\"=\"+.text"
+
+	secret=$($("$root/bin/get-params") | jq -r $key_val)
 
 	for x in ${secret[@]} ;do
 		export $x
