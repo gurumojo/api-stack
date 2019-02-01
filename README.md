@@ -1,6 +1,8 @@
 api-stack
 =========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/gurumojo/api-stack.svg)](https://greenkeeper.io/)
+
 Service stack definition providing a secure Nginx proxy, a PostgREST server,
 and an Express server complete with centralized configuration via the .env
 mechanism provided by docker-compose for local development. Testing and
