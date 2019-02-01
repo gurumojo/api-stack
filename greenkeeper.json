@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "lib/monitor/package.json",
+        "package.json"
+      ]
+    }
+  }
+}
