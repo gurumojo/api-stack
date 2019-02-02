@@ -2,16 +2,8 @@ version: '2'
 networks:
   private:
     driver: bridge
-    ipam:
-      config:
-      - subnet: 172.16.241.0/24
-        gateway: 172.16.241.1
   public:
     driver: bridge
-    ipam:
-      config:
-      - subnet: 172.16.141.0/24
-        gateway: 172.16.141.1
 services:
   api:
     build:
