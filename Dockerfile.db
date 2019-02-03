@@ -1,4 +1,4 @@
-FROM postgres:9-alpine
+FROM postgres:11-alpine
 
 # set DEBUG to enable logging of all postgres queries
 COPY bin/db-init /docker-entrypoint-initdb.d/init.sh

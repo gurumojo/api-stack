@@ -1,0 +1,18 @@
+#!/bin/bash -e
+#
+# Usage Example:
+#
+#	AWS_PROFILE=default \
+#	PARAM_PATH=/net/gurumojo/api/jwt \
+#	get-param-set
+
+AWS_PROFILE=${AWS_PROFILE:-dev}
+AWS_REGION=${AWS_REGION:-us-west-2}
+PARAM_PATH=${PARAM_PATH:-/net/gurumojo/api}
+PARAM_QUERY=${PARAM_QUERY:-Parameters[*].{path:Name,text:Value}}
+
+aws ssm get-parameters-by-path --with-decryption --no-paginate \
+	--profile "$AWS_PROFILE" \
+	--region "$AWS_REGION" \
+	--query "$PARAM_QUERY" \
+	--path "$PARAM_PATH"

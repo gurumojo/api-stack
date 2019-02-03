@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+root=$(dirname $(dirname $0))
+
+prerequisite=${CONTAINER_PRE}
+command=${CONTAINER_CMD:-tail -f /dev/null}
+
+source "$root/bin/env-init"
+"$root/bin/retry" $prerequisite
+if [ -f "$root/etc/update.env" ] ;then
+	source "$root/etc/update.env"
+	rm "$root/etc/update.env"
+fi
+exec $command

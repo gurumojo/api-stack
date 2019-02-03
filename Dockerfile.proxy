@@ -1,18 +1,20 @@
 FROM nginx:stable-alpine AS builder
 
-COPY bin bin
+COPY bin/diffie-hellman-parameter .
+COPY bin/self-signed-certificate .
 
-RUN apk --update --no-cache add bash busybox openssl && \
+RUN apk add -q --update --no-cache \
+		bash busybox openssl && \
 	mkdir -p /etc/pki/nginx && \
-	bin/diffie-hellman-parameter dhparam /etc/pki/nginx && \
-	bin/self-signed-certificate server /etc/pki/nginx
+	./self-signed-certificate server /etc/pki/nginx && \
+	./diffie-hellman-parameter dhparam /etc/pki/nginx
 
 
 
 FROM nginx:stable-alpine
 
 RUN apk add -q --update --no-cache \
-	bash curl jq
+	bash curl jq tini
 
 COPY --from=builder /etc/pki/nginx /etc/pki/nginx
 
@@ -27,4 +29,6 @@ COPY .env .env
 ENV CONTAINER_PRE=bin/proxy-init
 ENV CONTAINER_CMD=nginx
 
-CMD ["bin/container-init"]
+# USER nginx runs service workers via config
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["bin/tini-init"]

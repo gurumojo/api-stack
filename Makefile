@@ -1,5 +1,5 @@
 .PHONY: build bump ci clean debug dev docs down init launch local logs \
-	ps purge pristine roll scrub sweep start tail task test test-local up
+	ps purge pristine roll scrub sweep stop tail task test test-local up
 
 COUNT?=0
 
@@ -104,6 +104,14 @@ roll:
 
 scrub:
 	sudo rm -rf var/* 
+
+stop:
+	docker-compose \
+		-f docker-compose.api.yml \
+		-f docker-compose.docs.yml \
+		-f docker-compose.task.yml \
+		-f docker-compose.test.yml \
+		stop ${SERVICE}
 
 sweep:
 	docker rm $(docker ps -aq) 2>/dev/null || true

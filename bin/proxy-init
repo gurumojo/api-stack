@@ -11,15 +11,19 @@ config=$(curl -s http://${MONITOR_HOST}:${MONITOR_PORT}/config)
 fail=$?
 
 if (( $fail )) ;then
+	echo "Config unavailable."
 	exit 1
 else
 	"$root/bin/json-to-env" "$config" >> "$root/etc/update.env"
 fi
 
 count1=$(curl -s http://${API_HOST}:${API_PORT}/ | jq '.paths|length')
+fail=$?
 
-if (( $count1 )) ;then
-	exit 0
-else
+if (( $fail )) || [ -z "$count1" ] ;then
+	echo "API unavailable."
+	exit 1
+elif (( $count1 < 2 )) ;then
+	echo "Schema unavailable."
 	exit 1
 fi

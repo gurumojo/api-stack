@@ -6,6 +6,7 @@ config=$(curl -s http://${MONITOR_HOST}:${MONITOR_PORT}/config)
 fail=$?
 
 if (( $fail )) ;then
+	echo "Config unavailable."
 	exit 1
 else
 	"$root/bin/json-to-env" "$config" >> "$root/etc/update.env"

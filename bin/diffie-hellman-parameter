@@ -1,9 +1,12 @@
-#!/bin/bash -e
+#!/bin/sh
 
 NAME=${1:-dhparam}
 PATH=${2:-.}
 FILE=${PATH}/${NAME}.pem
 
-/usr/bin/openssl dhparam -out $FILE 2048
+echo "Creating Diffie-Hellman parameters ..."
 
-/bin/chmod 600 $FILE
+/usr/bin/openssl dhparam -out "$FILE" 2048 \
+	> /dev/null 2>&1
+
+/bin/chmod 600 "$FILE"

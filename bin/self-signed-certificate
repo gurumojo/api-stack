@@ -1,13 +1,16 @@
-#!/bin/bash -e
+#!/bin/sh
 
 NAME=${1:-openssl}
 PATH=${2:-.}
 KEY=${PATH}/${NAME}.key
 CRT=${PATH}/${NAME}.crt
 
+echo "Creating self-signed certificate ..."
+
 /usr/bin/openssl req \
 	-x509 -nodes -days 3650 \
 	-subj "/C=/ST=/L=/O=/CN=$NAME" \
-	-newkey rsa:2048 -keyout $KEY -out $CRT
+	-newkey rsa:2048 -keyout "$KEY" -out "$CRT" \
+	> /dev/null 2>&1
 
-/bin/chmod 600 ${KEY} ${CRT}
+/bin/chmod 600 "$KEY" "$CRT"

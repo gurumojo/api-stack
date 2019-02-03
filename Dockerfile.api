@@ -4,7 +4,13 @@ RUN apt-get -qq update && \
     apt-get -qq install -y --no-install-recommends \
 		curl jq && \
     apt-get -qq clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+	groupadd -g 777 api && \
+	useradd -r -g 777 -u 777 -s /sbin/nologin api
+
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
+RUN chmod +x /sbin/tini
 
 WORKDIR /opt/gurumojo
 
@@ -12,7 +18,11 @@ COPY bin bin
 COPY etc etc
 COPY .env .env
 
+RUN chown api etc
+
 ENV CONTAINER_PRE=bin/api-init
 ENV CONTAINER_CMD="postgrest /etc/postgrest.conf"
 
-CMD ["bin/container-init"]
+USER api
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["bin/tini-init"]
