@@ -1,9 +1,7 @@
 FROM node:10-alpine
 
 RUN apk add -q --update --no-cache \
-	bash curl jq shadow tini && \
-	groupadd -g 777 monitor && \
-	useradd -r -g 777 -u 777 -s /sbin/nologin monitor
+	bash curl jq tini
 
 WORKDIR /opt/gurumojo
 
@@ -16,11 +14,11 @@ COPY .env .env
 COPY lib/monitor .
 COPY lib/*.js lib/
 
-RUN chown monitor etc
+RUN chown node etc
 
 ENV CONTAINER_PRE=bin/monitor-init
 ENV CONTAINER_CMD="node server"
 
-USER monitor
+USER node
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["bin/tini-init"]

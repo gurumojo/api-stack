@@ -9,6 +9,7 @@
     "test": "exit 1"
   },
   "dependencies": {
+    "aws-sdk": "^2.396.0",
     "express": "^4.16.4",
     "http-graceful-shutdown": "^2.2.2",
     "request": "^2.88.0"

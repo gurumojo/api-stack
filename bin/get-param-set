@@ -1,18 +1,5 @@
-#!/bin/bash -e
-#
-# Usage Example:
-#
-#	AWS_PROFILE=default \
-#	PARAM_PATH=/net/gurumojo/api/jwt \
-#	get-param-set
+#!/usr/bin/env node
 
-AWS_PROFILE=${AWS_PROFILE:-dev}
-AWS_REGION=${AWS_REGION:-us-west-2}
-PARAM_PATH=${PARAM_PATH:-/net/gurumojo/api}
-PARAM_QUERY=${PARAM_QUERY:-Parameters[*].{path:Name,text:Value}}
+const { getParamSetAsObject } = require('../lib/ssm')
 
-aws ssm get-parameters-by-path --with-decryption --no-paginate \
-	--profile "$AWS_PROFILE" \
-	--region "$AWS_REGION" \
-	--query "$PARAM_QUERY" \
-	--path "$PARAM_PATH"
+getParamSetAsObject().then(params => console.log(JSON.stringify(params)))

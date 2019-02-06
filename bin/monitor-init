@@ -17,6 +17,8 @@ case "$AWS_PROFILE" in
 		;;
 esac
 
-if [ $AWS_PROFILE != dev ] ;then
-	"$root/bin/ssm-to-env" $("$root/bin/get-params") >> "$root/etc/update.env"
-fi
+export PARAM_PATH=${PARAM_ROOT}/${AWS_PROFILE}
+
+config=$("$root/bin/get-param-set")
+
+"$root/bin/json-to-env" "$config" >> "$root/etc/update.env"

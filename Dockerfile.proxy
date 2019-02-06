@@ -4,7 +4,7 @@ COPY bin/diffie-hellman-parameter .
 COPY bin/self-signed-certificate .
 
 RUN apk add -q --update --no-cache \
-		bash busybox openssl && \
+	bash busybox openssl && \
 	mkdir -p /etc/pki/nginx && \
 	./self-signed-certificate server /etc/pki/nginx && \
 	./diffie-hellman-parameter dhparam /etc/pki/nginx
@@ -17,7 +17,6 @@ RUN apk add -q --update --no-cache \
 	bash curl jq tini
 
 COPY --from=builder /etc/pki/nginx /etc/pki/nginx
-
 COPY etc/nginx /etc/nginx
 
 WORKDIR /opt/gurumojo

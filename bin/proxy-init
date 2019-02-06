@@ -27,3 +27,26 @@ elif (( $count1 < 2 )) ;then
 	echo "Schema unavailable."
 	exit 1
 fi
+
+echo "Fetching secrets ..."
+PARAM_PATH=${PARAM_ROOT}/${AWS_PROFILE}/nginx
+url="http://${MONITOR_HOST}:${MONITOR_PORT}/secret"
+secrets=$(curl -s -H "x-param-path: $PARAM_PATH" $url)
+
+names='.|to_entries|.[]|.key'
+list=$(echo $secrets | jq -r $names)
+for i in ${list[@]} ;do
+	value=".|to_entries|.[]|select(.key==\"$i\").value"
+	text=$(echo $secrets | jq -r $value)
+	case $i in
+		dhparam)
+			echo "$text" > /etc/pki/nginx/dhparam.pem
+			;;
+		ssl-crt)
+			echo "$text" > /etc/pki/nginx/server.crt
+			;;
+		ssl-key)
+			echo "$text" > /etc/pki/nginx/server.key
+			;;
+	esac
+done

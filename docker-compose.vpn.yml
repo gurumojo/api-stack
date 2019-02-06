@@ -10,11 +10,11 @@ networks:
     driver: bridge
     ipam:
       config:
-      - subnet: 172.16.241.0/24
-        gateway: 172.16.241.1
+      - subnet: 172.16.141.0/24
+        gateway: 172.16.141.1
   public:
     driver: bridge
     ipam:
       config:
-      - subnet: 172.16.141.0/24
-        gateway: 172.16.141.1
+      - subnet: 172.16.241.0/24
+        gateway: 172.16.241.1

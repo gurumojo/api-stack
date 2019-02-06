@@ -2,10 +2,10 @@
 
 [ -z "$TOKEN" ] && TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJndXJ1bW9qbyIsInJvbGUiOiJhcGlfYXV0aCJ9.cJiQ85KOHKjzeQW5S0UUBB9ExtHmFvQaZBNMU5B7jP8
 
-#curl -vk https://localhost:8443/user -X POST \
-#     -H "Authorization: Bearer $TOKEN" \
-#     -H "Content-Type: application/json" \
-#     -d '{"id":"e1be1033-4668-4652-bc44-dfcb904ca537","email":"theguy@gurumojo.net","phone":"12345678901","handle":"theguy"}'
+curl -vk https://localhost:8443/user -X POST \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{"id":"e1be1033-4668-4652-bc44-dfcb904ca537","email":"theguy@gurumojo.net","phone":"12345678901","handle":"theguy"}'
 
 #curl -vk https://localhost:8443/group -X POST \
 #     -H "Authorization: Bearer $TOKEN" \
@@ -22,8 +22,8 @@
 #     -H "Content-Type: application/json" \
 #     -d '{"id":"ce0acfe5-28a3-4330-82c4-a91415fb6932","email":"fubar@gurumojo.net","phone":"1234","handle":"fubar"}'
 
-curl -vk https://localhost:8443/device -X POST \
-     -H "Authorization: Bearer $TOKEN" \
-     -H "Content-Type: application/json" \
-     -d '{"user_id":"e1be1033-4668-4652-bc44-dfcb904ca537","platform":"","key":"6b36dc2dd025111ba65c469fbef24ac432ba2aab39dd1e949cfedcf22c31cfe6"}'
+#curl -vk https://localhost:8443/device -X POST \
+#     -H "Authorization: Bearer $TOKEN" \
+#     -H "Content-Type: application/json" \
+#     -d '{"user_id":"e1be1033-4668-4652-bc44-dfcb904ca537","platform":"","key":"6b36dc2dd025111ba65c469fbef24ac432ba2aab39dd1e949cfedcf22c31cfe6"}'
 

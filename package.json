@@ -17,5 +17,8 @@
     "url": "git+https://github.com/gurumojo/api-stack.git",
     "type": "git"
   },
-  "homepage": "https://github.com/gurumojo/api-stack#readme"
+  "homepage": "https://github.com/gurumojo/api-stack#readme",
+  "dependencies": {
+    "aws-sdk": "^2.396.0"
+  }
 }

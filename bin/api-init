@@ -11,3 +11,25 @@ if (( $fail )) ;then
 else
 	"$root/bin/json-to-env" "$config" >> "$root/etc/update.env"
 fi
+
+echo "Fetching secrets ..."
+PARAM_PATH=${PARAM_ROOT}/${AWS_PROFILE}/jwt
+url="http://${MONITOR_HOST}:${MONITOR_PORT}/secret"
+secrets=$(curl -s -H "x-param-path: $PARAM_PATH" $url)
+
+names='.|to_entries|.[]|.key'
+list=$(echo $secrets | jq -r $names)
+for i in ${list[@]} ;do
+	value=".|to_entries|.[]|select(.key==\"$i\").value"
+	text=$(echo $secrets | jq -r $value)
+	set -a
+	case $i in
+		aud)
+			PGRST_JWT_AUD="$text"
+			;;
+		secret)
+			PGRST_JWT_SECRET="$text"
+			;;
+	esac
+	set +a
+done

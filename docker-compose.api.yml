@@ -43,6 +43,8 @@ services:
     networks:
       - private
       - public
+    volumes:
+      - ${HOME}/.aws:/home/node/.aws:ro
   proxy:
     build:
       context: .
